@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "myakscluster-f445"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "myakscluster-f445"
+  template:
+    metadata:
+      labels:
+        app: "myakscluster-f445"
+    spec:
+      containers:
+        - name: "myakscluster-f445"
+          image: "myacrjoon95.azurecr.io/myakscluster"
+          ports:
+          - containerPort: 80
