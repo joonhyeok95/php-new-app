@@ -1,3 +1,3 @@
 FROM phpmyadmin/phpmyadmin:4.7
 
-add ./* /home
+add ./index.php /
