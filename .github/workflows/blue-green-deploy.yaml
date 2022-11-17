@@ -56,8 +56,8 @@ jobs:
         with:
           namespace: default
           manifests: |
-            manifests/service.yaml
-            manifests/green-deploy.yaml
+            manifests/service.yml
+            manifests/green-deploy.yml
           images: |
             lottechemicalacr.azurecr.io/php:1.1
           strategy: blue-green
@@ -70,8 +70,8 @@ jobs:
         with:
           namespace: default
           manifests: |
-            manifests/service.yaml
-            manifests/blue-deploy.yaml
+            manifests/service.yml
+            manifests/blue-deploy.yml
           images: |
             lottechemicalacr.azurecr.io/php:1.0
           strategy: blue-green
