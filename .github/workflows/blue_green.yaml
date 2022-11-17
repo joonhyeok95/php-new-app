@@ -20,7 +20,7 @@ jobs:
           images: |
             lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
           manifests: |
-            manifests/deployment-blue-green.yml
+            manifests/blue-deploy.yml
             manifests/service.yml
           # ingress.yml
           strategy: blue-green
