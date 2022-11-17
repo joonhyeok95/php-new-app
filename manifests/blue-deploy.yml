@@ -7,12 +7,10 @@ spec:
   selector:
     matchLabels:
       app: "lottechemicalacr"
-      color: blue
   template:
     metadata:
       labels:
         app: "lottechemicalacr"
-        color: blue
     spec:
       containers:
         - name: "lottechemicalacr"
