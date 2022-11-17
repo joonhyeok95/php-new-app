@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "lottechemicalacr"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "lottechemicalacr"
+      color: green
+  template:
+    metadata:
+      labels:
+        app: "lottechemicalacr"
+        color: green
+    spec:
+      containers:
+        - name: "lottechemicalacr"
+          image: "lottechemicalacr.azurecr.io/php"
+          ports:
+            - containerPort: 80
