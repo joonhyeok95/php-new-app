@@ -24,8 +24,8 @@ jobs:
           #     image-pull-secret1
           #     image-pull-secret2
           manifests: |
-            manifests/deployment.yml
-            manifests/service.yml
+            manifests/deployment-blue-green.yml
+            manifests/service-blue-green.yml
           # ingress.yml
           strategy: blue-green
           action: deploy
