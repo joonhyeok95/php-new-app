@@ -68,7 +68,7 @@ jobs:
           namespace: php
           manifests: |
             manifests/service.yml
-            manifests/green-deploy.yml
+            manifests/blue-deploy.yml
           images: |
             lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
           strategy: blue-green
