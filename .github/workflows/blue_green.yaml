@@ -31,7 +31,7 @@ jobs:
 
   approveapp:
     runs-on: ubuntu-latest
-    needs: deployapp
+    needs: deploy
     environment: akspromotion
     steps:
       - run: echo asked for approval
