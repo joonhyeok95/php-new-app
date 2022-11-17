@@ -3,16 +3,14 @@ kind: Deployment
 metadata:
   name: "lottechemicalacr"
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: "lottechemicalacr"
-      color: green
   template:
     metadata:
       labels:
         app: "lottechemicalacr"
-        color: green
     spec:
       containers:
         - name: "lottechemicalacr"
