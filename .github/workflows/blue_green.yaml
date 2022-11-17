@@ -6,7 +6,7 @@ on:
         default: "1.0"
         type: string
 jobs:
-  deploy:
+  deployapp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -31,7 +31,7 @@ jobs:
 
   approveapp:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: deployapp
     environment: akspromotion
     steps:
       - run: echo asked for approval
@@ -53,8 +53,8 @@ jobs:
         with:
           namespace: php
           manifests: |
-            ./kubernetes/service.yaml
-            ./kubernetes/green-deploy.yaml
+            ./manifests/service.yaml
+            ./manifests/green-deploy.yaml
           images: |
             lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
           strategy: blue-green
@@ -67,8 +67,8 @@ jobs:
         with:
           namespace: php
           manifests: |
-            ./kubernetes/service.yaml
-            ./kubernetes/blue-deploy.yaml
+            ./manifests/service.yaml
+            ./manifests/blue-deploy.yaml
           images: |
             lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
           strategy: blue-green
