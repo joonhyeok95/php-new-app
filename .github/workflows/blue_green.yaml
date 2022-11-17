@@ -9,20 +9,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-
       - uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.aks_kubeconfig }}
         id: login
 
-      - uses: azure/k8s-deploy@v1.2
-        with:
-          manifests: |
-            manifests/deployment.yml
-            manifests/service.yml
-          images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
       - uses: Azure/k8s-deploy@v3.1
         with:
           namespace: php
