@@ -1,0 +1,42 @@
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION:
+        required: false
+        default: "1.0"
+        type: string
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.aks_kubeconfig }}
+        id: login
+
+      - uses: azure/k8s-deploy@v1.2
+        with:
+          manifests: |
+            manifests/deployment.yml
+            manifests/service.yml
+          images: |
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+      - uses: Azure/k8s-deploy@v3.1
+        with:
+          namespace: php
+          images: |
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+          # imagepullsecrets: |
+          #     image-pull-secret1
+          #     image-pull-secret2
+          manifests: |
+            manifests/deployment.yml
+            manifests/service.yml
+          # ingress.yml
+          strategy: blue-green
+          action: deploy
+          route-method: service # substitute with service/smi as per need
+          # route-method: ingress # substitute with service/smi as per need
+          version-switch-buffer: 15
