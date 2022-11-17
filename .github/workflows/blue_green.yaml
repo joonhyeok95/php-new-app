@@ -6,7 +6,7 @@ on:
         default: "1.0"
         type: string
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -14,21 +14,63 @@ jobs:
         with:
           kubeconfig: ${{ secrets.aks_kubeconfig }}
         id: login
-
       - uses: Azure/k8s-deploy@v3.1
         with:
           namespace: php
           images: |
             lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
-          # imagepullsecrets: |
-          #     image-pull-secret1
-          #     image-pull-secret2
           manifests: |
             manifests/deployment-blue-green.yml
-            manifests/service-blue-green.yml
+            manifests/service.yml
           # ingress.yml
           strategy: blue-green
           action: deploy
           route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
           version-switch-buffer: 15
+
+  approveapp:
+    runs-on: ubuntu-latest
+    needs: deployapp
+    environment: akspromotion
+    steps:
+      - run: echo asked for approval
+
+  promotereject:
+    runs-on: ubuntu-latest
+    needs: approveapp
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.aks_kubeconfig }}
+        id: login
+
+      - name: Promote App
+        uses: azure/k8s-deploy@v1.3
+        if: ${{ success() }}
+        with:
+          namespace: php
+          manifests: |
+            ./kubernetes/service.yaml
+            ./kubernetes/green-deploy.yaml
+          images: |
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+          strategy: blue-green
+          traffic-split-method: pod
+          action: promote #deploy is the default; we will later use this to promote/reject
+
+      - name: Reject App
+        uses: azure/k8s-deploy@v1.3
+        if: ${{ failure() }}
+        with:
+          namespace: php
+          manifests: |
+            ./kubernetes/service.yaml
+            ./kubernetes/blue-deploy.yaml
+          images: |
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+          strategy: blue-green
+          traffic-split-method: pod
+          action: reject #deploy is the default; we will later use this to promote/reject
