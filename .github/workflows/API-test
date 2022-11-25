@@ -1,0 +1,25 @@
+name: API-webtobe-CI
+
+on:
+  # API hook 용도
+  repository_dispatch:
+    types: [webtobe-CI]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@master
+
+      - uses: azure/docker-login@v1
+        with:
+          login-server: lottechemicalacr.azurecr.io
+          username: ${{ secrets.acr_username }}
+          password: ${{ secrets.acr_password }}
+
+      - name: Build and push image to ACR
+        id: build-image
+        run: |
+          docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t lottechemicalacr.azurecr.io/php:${{ github.event.client_payload.tag }} --label dockerfile-path=Dockerfile
+          docker push lottechemicalacr.azurecr.io/php:${{ github.event.client_payload.tag }}
