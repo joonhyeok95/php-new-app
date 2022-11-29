@@ -5,6 +5,7 @@ metadata:
   labels:
     app: "spring-app-svc"
     k8s.deploy.color: "blue"
+    my.color: "blue"
 spec:
   type: LoadBalancer
   ports:
@@ -15,3 +16,4 @@ spec:
   selector:
     app: "spring-app"
     k8s.deploy.color: "blue"
+    my.color: "blue"
