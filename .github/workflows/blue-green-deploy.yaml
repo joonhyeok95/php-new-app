@@ -47,7 +47,7 @@ jobs:
           strategy: blue-green
           route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
-          version-switch-buffer: 15
+#           version-switch-buffer: 15
 #           traffic-split-method: pod
           action: deploy #deploy is the default; we will later use this to promote/reject
           
