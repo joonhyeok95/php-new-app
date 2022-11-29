@@ -1,20 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Blue-Green-strategy
-
+name: sample
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
-  ACR_NAME: demogaurav.azurecr.io
+  ACR_NAME: lottechemicalacr.azurecr.io
   ACR_REPO_NAME: demogaurav.azurecr.io/docker-java-app
   ARTIFACT_NAME: docker-java-app
   RESOURCE_GROUP: Gaurav-RG
@@ -49,7 +42,7 @@ jobs:
             ./kubernetes/service.yaml
             ./kubernetes/blue-deploy.yaml
           images: |
-            demogaurav.azurecr.io/green-nginx:1
+            lottechemicalacr.azurecr.io/spring-app:22.11.29-001
           strategy: blue-green
           traffic-split-method: pod
           action: deploy  #deploy is the default; we will later use this to promote/reject
@@ -81,7 +74,7 @@ jobs:
             ./kubernetes/service.yaml
             ./kubernetes/green-deploy.yaml
           images: |
-            demogaurav.azurecr.io/green-nginx:1
+            lottechemicalacr.azurecr.io/spring-app:22.11.29-001
           strategy: blue-green
           traffic-split-method: pod
           action: promote  #deploy is the default; we will later use this to promote/reject
@@ -95,7 +88,7 @@ jobs:
             ./kubernetes/service.yaml
             ./kubernetes/blue-deploy.yaml
           images: |
-            demogaurav.azurecr.io/green-nginx:1
+            lottechemicalacr.azurecr.io/spring-app:22.11.29-001
           strategy: blue-green
           traffic-split-method: pod
           action: reject  #deploy is the default; we will later use this to promote/reject
