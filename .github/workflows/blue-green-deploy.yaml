@@ -52,8 +52,7 @@ jobs:
 
       - name: Promote App
         uses: azure/k8s-deploy@v1.3
-        if: ${{ failure() }}
-#         if: ${{ success() }}
+        if: ${{ success() }}
         with:
           namespace: default
           manifests: |
@@ -67,8 +66,7 @@ jobs:
 
       - name: Reject App
         uses: azure/k8s-deploy@v1.3
-        if: ${{ success() }}
-#         if: ${{ failure() }}
+        if: ${{ failure() }}
         with:
           namespace: default
           manifests: |
