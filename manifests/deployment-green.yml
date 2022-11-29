@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "spring-app"
+  labels:
+    app: "spring-app"
+    k8s.deploy.color: "green"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "spring-app"
+      k8s.deploy.color: "green"
+  template:
+    metadata:
+      labels:
+        app: "spring-app"
+        k8s.deploy.color: "green"
+    spec:
+      containers:
+        - name: "spring-app"
+          image: "lottechemicalacr.azurecr.io/spring-app"
+          ports:
+            - containerPort: 8222
