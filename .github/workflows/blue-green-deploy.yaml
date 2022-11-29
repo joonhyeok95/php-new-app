@@ -23,6 +23,7 @@ on:
         default: "default"
         type: string
 jobs:
+  # 교체될 새로운 pod를 생성
   deployapp:
     runs-on: ubuntu-latest
     steps:
@@ -41,22 +42,23 @@ jobs:
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           manifests: |
-            manifests/deployment-green.yml
-            manifests/service-green.yml
+            manifests/deployment.yml
+            manifests/service.yml
           strategy: blue-green
           route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
           # version-switch-buffer: 15
           traffic-split-method: pod
           action: deploy #deploy is the default; we will later use this to promote/reject
-
+          
+  # 승인여부 체크
   approveapp:
     runs-on: ubuntu-latest
     needs: deployapp
     environment: akspromotion
     steps:
       - run: echo asked for approval joonhyeok
-
+  
   promotereject:
     runs-on: ubuntu-latest
     needs: approveapp
@@ -70,28 +72,30 @@ jobs:
           kubeconfig: ${{ secrets.aks_kubeconfig }}
         id: login
 
+      # 승인이 나면 새로운 pod로 재배포
       - name: Promote App
         uses: azure/k8s-deploy@v1.3
         if: ${{ success() }}
         with:
           namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
-            manifests/service-green.yml
-            manifests/deployment-green.yml
+            manifests/service.yml
+            manifests/deployment.yml
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
           action: promote #deploy is the default; we will later use this to promote/reject
-
+          
+      # 결제 취소시 기존 pod 재배포
       - name: Reject App
         uses: azure/k8s-deploy@v1.3
         if: ${{ failure() }}
         with:
           namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
-            manifests/service-blue.yml
-            manifests/deployment-blue.yml
+            manifests/service.yml
+            manifests/deployment.yml
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.OLD_VERSION }}
           strategy: blue-green
