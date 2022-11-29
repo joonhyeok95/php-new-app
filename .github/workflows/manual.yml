@@ -11,6 +11,11 @@ on:
         required: false
         default: "main"
         type: string
+      IMAGENAME:
+        required: false
+        default: "php"
+        type: string
+        
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -27,8 +32,8 @@ jobs:
       - name: Build and push image to ACR
         id: build-image
         run: |
-          docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }} --label dockerfile-path=Dockerfile
-          docker push lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+          docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }} --label dockerfile-path=Dockerfile
+          docker push lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }}
 
       - uses: azure/k8s-set-context@v1
         with:
@@ -57,4 +62,4 @@ jobs:
             manifests/deployment.yml
             manifests/service.yml
           images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+            lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }}
