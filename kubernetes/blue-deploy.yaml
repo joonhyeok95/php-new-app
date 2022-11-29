@@ -15,7 +15,7 @@ spec:
     spec:
       containers: 
         - name: nginx
-          image: demogaurav.azurecr.io/blue-nginx:1
+          image: lottechemicalacr.azurecr.io/spring-app:22.11.29-002
           ports:
             - name: http
               containerPort: 80
