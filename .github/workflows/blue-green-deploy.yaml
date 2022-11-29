@@ -2,7 +2,11 @@ name: Blue-Green-strategy
 on:
   workflow_dispatch:
     inputs:
-      VERSION:
+      NEW_VERSION:
+        required: false
+        default: "1.0"
+        type: string
+      OLD_VERSION:
         required: false
         default: "1.0"
         type: string
@@ -20,11 +24,10 @@ jobs:
         with:
           namespace: default
           images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.VERSION }}
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.NEW_VERSION }}
           manifests: |
-            manifests/blue-deploy.yml
+            manifests/deployment.yml
             manifests/service.yml
-          # ingress.yml
           strategy: blue-green
           # route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
@@ -32,7 +35,7 @@ jobs:
           traffic-split-method: pod
           action: deploy #deploy is the default; we will later use this to promote/reject
 
-  approveapp:
+  approveapp한글:
     runs-on: ubuntu-latest
     needs: deployapp
     environment: akspromotion
@@ -57,9 +60,9 @@ jobs:
           namespace: default
           manifests: |
             manifests/service.yml
-            manifests/green-deploy.yml
+            manifests/deployment.yml
           images: |
-            lottechemicalacr.azurecr.io/php:1.1
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.NEW_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
           action: promote #deploy is the default; we will later use this to promote/reject
@@ -71,9 +74,9 @@ jobs:
           namespace: default
           manifests: |
             manifests/service.yml
-            manifests/blue-deploy.yml
+            manifests/deployment.yml
           images: |
-            lottechemicalacr.azurecr.io/php:1.0
+            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.OLD_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
           action: reject #deploy is the default; we will later use this to promote/reject
