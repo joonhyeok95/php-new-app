@@ -1,3 +1,3 @@
 FROM phpmyadmin/phpmyadmin:4.7
 
-add ./index.php /
+add ./index.php /www/test.php
