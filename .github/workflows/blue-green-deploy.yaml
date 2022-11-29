@@ -62,7 +62,9 @@ jobs:
     needs: approveapp
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          ref: ${{ github.event.inputs.BRANCH }}
+          
       - uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.aks_kubeconfig }}
