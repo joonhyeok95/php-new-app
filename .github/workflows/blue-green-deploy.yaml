@@ -10,6 +10,14 @@ on:
         required: false
         default: "1.0"
         type: string
+      IMAGENAME:
+        required: false
+        default: "php"
+        type: string
+      NAMESPACE:
+        required: false
+        default: "default"
+        type: string
 jobs:
   deployapp:
     runs-on: ubuntu-latest
@@ -22,9 +30,9 @@ jobs:
 
       - uses: Azure/k8s-deploy@v1.3
         with:
-          namespace: default
+          namespace: ${{ github.event.inputs.NAMESPACE }}
           images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.NEW_VERSION }}
+            lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           manifests: |
             manifests/deployment.yml
             manifests/service.yml
@@ -57,12 +65,12 @@ jobs:
         uses: azure/k8s-deploy@v1.3
         if: ${{ success() }}
         with:
-          namespace: default
+          namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
             manifests/service.yml
             manifests/deployment.yml
           images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.NEW_VERSION }}
+            lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
           action: promote #deploy is the default; we will later use this to promote/reject
@@ -71,12 +79,12 @@ jobs:
         uses: azure/k8s-deploy@v1.3
         if: ${{ failure() }}
         with:
-          namespace: default
+          namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
             manifests/service.yml
             manifests/deployment.yml
           images: |
-            lottechemicalacr.azurecr.io/php:${{ github.event.inputs.OLD_VERSION }}
+            lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.OLD_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
           action: reject #deploy is the default; we will later use this to promote/reject
