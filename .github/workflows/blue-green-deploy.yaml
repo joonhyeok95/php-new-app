@@ -85,7 +85,7 @@ jobs:
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
-          action: promote #deploy is the default; we will later use this to promote/reject
+          action: reject #deploy is the default; we will later use this to promote/reject
 
       # 결제 취소시 기존 pod 재배포
       - name: Reject App
@@ -100,4 +100,4 @@ jobs:
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.OLD_VERSION }}
           strategy: blue-green
           traffic-split-method: pod
-          action: reject #deploy is the default; we will later use this to promote/reject
+          action: promote #deploy is the default; we will later use this to promote/reject
