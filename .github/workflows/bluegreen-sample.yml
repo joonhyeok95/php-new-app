@@ -8,10 +8,10 @@ on:
 
 env:
   ACR_NAME: lottechemicalacr.azurecr.io
-  ACR_REPO_NAME: demogaurav.azurecr.io/docker-java-app
-  ARTIFACT_NAME: docker-java-app
-  RESOURCE_GROUP: Gaurav-RG
-  AKS_CLUSTER_NAME: Gaurav-AKS-cluster
+#   ACR_REPO_NAME: lottechemicalacr.azurecr.io/docker-java-app
+#   ARTIFACT_NAME: docker-java-app
+  RESOURCE_GROUP: aks-lottechemical-po_group
+  AKS_CLUSTER_NAME: aks-lottechemical-poc
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
