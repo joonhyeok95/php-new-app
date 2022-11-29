@@ -1,4 +1,4 @@
-name: manual-CI/CD
+name: spring-manual-CI/CD
 
 on:
   workflow_dispatch:
