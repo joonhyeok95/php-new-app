@@ -5,17 +5,20 @@ metadata:
   labels:
     app: "spring-app"
     k8s.deploy.color: "blue"
+    my.color: "blue"
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: "spring-app"
       k8s.deploy.color: "blue"
+      my.color: "blue"
   template:
     metadata:
       labels:
         app: "spring-app"
         k8s.deploy.color: "blue"
+        my.color: "blue"
     spec:
       containers:
         - name: "spring-app"
