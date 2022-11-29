@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "lottechemicalacr"
+  name: "php"
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: "lottechemicalacr"
+      app: "php"
   template:
     metadata:
       labels:
-        app: "lottechemicalacr"
+        app: "php"
     spec:
       containers:
-        - name: "lottechemicalacr"
+        - name: "php"
           image: "lottechemicalacr.azurecr.io/php"
           ports:
             - containerPort: 80
