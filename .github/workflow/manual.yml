@@ -1,0 +1,61 @@
+name: manual-CI/CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION:
+        required: false
+        default: "1.0"
+        type: string
+      BRANCH:
+        required: false
+        default: "main"
+        type: string
+      IMAGENAME:
+        required: false
+        default: "php"
+        type: string
+      NAMESPACE:
+        required: false
+        default: "default"
+        type: string
+        
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: ${{ github.event.inputs.BRANCH }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: lottechemicalacr.azurecr.io
+          username: ${{ secrets.acr_username }}
+          password: ${{ secrets.acr_password }}
+
+      - name: Build and push image to ACR
+        id: build-image
+        run: |
+          docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }} --label dockerfile-path=Dockerfile
+          docker push lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }}
+      - uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.aks_kubeconfig }}
+        id: login
+
+      - name: Create namespace
+        run: |
+          namespacePresent=`kubectl get namespace | grep ${{ github.event.inputs.NAMESPACE }} | wc -l`
+          if [ $namespacePresent -eq 0 ]
+          then
+              echo `kubectl create namespace ${{ github.event.inputs.NAMESPACE }}`
+          fi
+
+      - uses: azure/k8s-deploy@v1.2
+        with:
+          namespace: ${{ github.event.inputs.NAMESPACE }}
+          manifests: |
+            manifests/deployment.yml
+            manifests/service.yml
+          images: |
+            lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.VERSION }}
