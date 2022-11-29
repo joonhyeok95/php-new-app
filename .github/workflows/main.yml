@@ -1,3 +1,5 @@
+name: manual-CI/CD
+
 on:
   workflow_dispatch:
     inputs:
