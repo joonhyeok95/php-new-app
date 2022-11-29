@@ -47,8 +47,8 @@ jobs:
           strategy: blue-green
           route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
-          # version-switch-buffer: 15
-          traffic-split-method: pod
+          version-switch-buffer: 15
+#           traffic-split-method: pod
           action: deploy #deploy is the default; we will later use this to promote/reject
           
   # 승인여부 체크
@@ -86,7 +86,7 @@ jobs:
           strategy: blue-green
           traffic-split-method: pod
           action: promote #deploy is the default; we will later use this to promote/reject
-          
+
       # 결제 취소시 기존 pod 재배포
       - name: Reject App
         uses: azure/k8s-deploy@v1.3
