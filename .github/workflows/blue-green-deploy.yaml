@@ -41,8 +41,8 @@ jobs:
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           manifests: |
-            manifests/deployment.yml
-            manifests/service.yml
+            manifests/deployment-green.yml
+            manifests/service-green.yml
           strategy: blue-green
           route-method: service # substitute with service/smi as per need
           # route-method: ingress # substitute with service/smi as per need
@@ -76,8 +76,8 @@ jobs:
         with:
           namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
-            manifests/service.yml
-            manifests/deployment.yml
+            manifests/service-green.yml
+            manifests/deployment-green.yml
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.NEW_VERSION }}
           strategy: blue-green
@@ -90,8 +90,8 @@ jobs:
         with:
           namespace: ${{ github.event.inputs.NAMESPACE }}
           manifests: |
-            manifests/service.yml
-            manifests/deployment.yml
+            manifests/service-blue.yml
+            manifests/deployment-blue.yml
           images: |
             lottechemicalacr.azurecr.io/${{ github.event.inputs.IMAGENAME }}:${{ github.event.inputs.OLD_VERSION }}
           strategy: blue-green
