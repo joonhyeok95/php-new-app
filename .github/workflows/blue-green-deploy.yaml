@@ -18,11 +18,18 @@ on:
         required: false
         default: "default"
         type: string
+      BRANCH:
+        required: false
+        default: "default"
+        type: string
 jobs:
   deployapp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+        with:
+          ref: ${{ github.event.inputs.BRANCH }}
+        
       - uses: azure/k8s-set-context@v1
         with:
           kubeconfig: ${{ secrets.aks_kubeconfig }}
