@@ -19,3 +19,13 @@ spec:
           ports:
             - name: http
               containerPort: 8222
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8222
+              scheme: HTTP
+            initialDelaySeconds: 660
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
