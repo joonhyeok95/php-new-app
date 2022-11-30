@@ -81,8 +81,8 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/kubernetes/blue-deploy.yaml
-                $(Pipeline.Workspace)/kubernetes/service.yaml
+                kubernetes/blue-deploy.yaml
+                kubernetes/service.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
@@ -122,8 +122,8 @@ stages:
               action: deploy
               namespace: $(k8sNamespaceForPR)
               manifests: |
-                $(Pipeline.Workspace)/kubernetes/blue-deploy.yaml
-                $(Pipeline.Workspace)/kubernetes/service.yaml
+                kubernetes/blue-deploy.yaml
+                kubernetes/service.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
