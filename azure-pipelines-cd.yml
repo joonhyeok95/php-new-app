@@ -65,12 +65,10 @@ stages:
             fetchTags: true
             displayName: git clone
           - script: |
+              pwd
               ls -al
+              tree
               echo '작업위치:$(Pipeline.Workspace)'
-
-          - upload: kubernetes
-            artifact: kubernetes
-            
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
