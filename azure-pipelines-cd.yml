@@ -61,6 +61,12 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
+            fetchTags: true
+            displayName: git clone
+          - script: |
+              ls -al
+              echo $(Pipeline.Workspace)
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
