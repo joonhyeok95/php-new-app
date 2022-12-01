@@ -120,19 +120,19 @@ stages:
     - script: |
         echo '어케된거죠?'
 
-  - job: failed
-    condition: failed()
-    dependsOn: test1
-    steps:
-    - script: |
-        echo 'fail 인가요..'
+  # - job: failed
+  #   condition: failed()
+  #   dependsOn: test1
+  #   steps:
+  #   - script: |
+  #       echo 'fail 인가요..'
 
-  - job: success
-    dependsOn: test1
-    condition: succeeded()
-    steps:
-    - script: |
-        echo 'successed 인가요..'
+  # - job: success
+  #   dependsOn: test1
+  #   condition: succeeded()
+  #   steps:
+  #   - script: |
+  #       echo 'successed 인가요..'
 
 - stage: Service
   displayName: Service
