@@ -124,7 +124,10 @@ stages:
       inputs:
         secureFile: 'aks.config'
     - script: |
-        kubectl get svc -n azdev --kubeconfig aks.config
+        echo '파일경로 : $(aks.config.secureFilePath)'
+        ls -al
+        tree
+        kubectl get svc -n azdev --kubeconfig $(aks.config.secureFilePath)
 
 
 #   - deployment: DeployPullRequest
