@@ -117,6 +117,22 @@ stages:
               joon95
           instructions: 'Please validate the build configuration and resume'
           onTimeout: 'resume'
+    - script: |
+        echo '어케된거죠?'
+
+  - job: failed
+    condition: failed()
+    dependsOn: waitForValidation
+    steps:
+    - script: |
+        echo 'fail 인가요..'
+
+  - job: success
+    dependsOn: waitForValidation
+    condition: succeeded()
+    steps:
+    - script: |
+        echo 'successed 인가요..'
 
 - stage: Service
   displayName: Service
