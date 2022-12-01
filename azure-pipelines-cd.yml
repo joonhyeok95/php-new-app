@@ -64,11 +64,11 @@ stages:
           - checkout: self
             fetchTags: true
             displayName: git clone
+
           - script: |
               echo '여기서 yaml label을 설정해야함.'
               sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
               cat kubernetes/deploy-green.yml
-              cat Dockerfile
               tree
 
 # image pull secret 재생성
