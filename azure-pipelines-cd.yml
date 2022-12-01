@@ -105,7 +105,7 @@ stages:
 - stage: check
   dependsOn: Deploy
   jobs:
-  - job: test1
+  - job: waitForValidation
     displayName: check admin  
     pool: server    
     timeoutInMinutes: 4320 # job times out in 3 days
@@ -122,13 +122,13 @@ stages:
 
   # - job: failed
   #   condition: failed()
-  #   dependsOn: test1
+  #   dependsOn: waitForValidation
   #   steps:
   #   - script: |
   #       echo 'fail 인가요..'
 
   # - job: success
-  #   dependsOn: test1
+  #   dependsOn: waitForValidation
   #   condition: succeeded()
   #   steps:
   #   - script: |
