@@ -67,7 +67,7 @@ stages:
           - script: |
               tree
               # 여기서 yaml label을 설정해야함.
-              sed 's/{{SED_DATA}}/$(MY_TAG)/gi' kubernetes/deploy-green.yaml > kubernetes/deploy-green.yaml
+              sed "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yaml > kubernetes/deploy-green.yaml
 
 # image pull secret 재생성
           - task: KubernetesManifest@0
