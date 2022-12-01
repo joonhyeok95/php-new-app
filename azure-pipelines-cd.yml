@@ -101,7 +101,6 @@ stages:
               # containers: |
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
-
 # 서비스 교체 테스트 완료
 - stage: Service
   displayName: Service
@@ -113,10 +112,6 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-
-    - task: ManualValidation@0
-      inputs:
-        notifyUsers: joon95 
         
     - task: DownloadSecureFile@1
       name: sample
