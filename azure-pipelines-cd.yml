@@ -101,7 +101,7 @@ stages:
 
 - stage: Service
   displayName: Service
-  dependsOn: Deploy
+  # dependsOn: Deploy
   jobs:
   - job: ServiceChange
     displayName: Service Change
