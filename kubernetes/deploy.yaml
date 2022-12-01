@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: spring-app
-#       vers: 22.11.29-001
+      vers: 22.11.29-001
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,7 +19,7 @@ spec:
     metadata:
       labels:
         app: spring-app
-#         vers: 22.11.29-001
+        vers: 22.11.29-001
     spec:
       containers:
       - image: lottechemicalacr.azurecr.io/spring-app
