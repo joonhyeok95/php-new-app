@@ -81,7 +81,7 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                kubernetes/blue-deploy.yaml
+                kubernetes/deploy.yaml
                 kubernetes/service.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
