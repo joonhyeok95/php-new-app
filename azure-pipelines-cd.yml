@@ -102,6 +102,21 @@ stages:
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
 # 서비스 교체 테스트 완료
+- stage: check ADMIN
+  jobs:
+  - job: waitForValidation
+    displayName: Wait for external validation  
+    pool: server    
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:   
+    - task: ManualValidation@0
+      timeoutInMinutes: 1440 # task times out in 1 day
+      inputs:
+          notifyUsers: |
+              joon95
+          instructions: 'Please validate the build configuration and resume'
+          onTimeout: 'resume'
+
 - stage: Service
   displayName: Service
   dependsOn: Deploy
