@@ -108,6 +108,7 @@ stages:
               useConfigurationFile: true
               inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
 
+# image pull secret 생성
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
@@ -116,19 +117,21 @@ stages:
               namespace: $(k8sNamespaceForPR)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
+# 변수 k8sNamespaceForPR 에 배포
           - task: KubernetesManifest@0
             displayName: Deploy to the new namespace in the Kubernetes cluster
             inputs:
               action: deploy
               namespace: $(k8sNamespaceForPR)
               manifests: |
-                kubernetes/blue-deploy.yaml
+                kubernetes/deploy.yaml
                 kubernetes/service.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
+# 배포된 서비스 url을 메시지로 출력하는 예제
           - task: Kubernetes@1
             name: get
             displayName: 'Get services in the new namespace'
