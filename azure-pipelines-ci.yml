@@ -30,7 +30,19 @@ stages:
       vmImage: $(vmImageName)
     steps:
     
-      
+
+    - task: Maven@4
+      displayName: Maven Build
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+        
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
