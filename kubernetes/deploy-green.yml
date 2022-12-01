@@ -8,7 +8,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: spring-app-green
+      app: spring-app
       vers: {{SED_DATA}}
   strategy:
     rollingUpdate:
@@ -18,13 +18,13 @@ spec:
   template:
     metadata:
       labels:
-        app: spring-app-green
+        app: spring-app
         vers: {{SED_DATA}}
     spec:
       containers:
-      - image: lottechemicalacr.azurecr.io/spring-app
+      - image: lottechemicalacr.azurecr.io/spring-app:{{SED_DATA}}
         imagePullPolicy: IfNotPresent
-        name: spring-app-green
+        name: spring-app
         ports:
         - containerPort: 8222
           name: http
