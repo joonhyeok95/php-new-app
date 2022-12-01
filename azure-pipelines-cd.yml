@@ -66,10 +66,8 @@ stages:
             displayName: git clone
 
           - script: |
-              echo '여기서 yaml label을 설정해야함.'
+              echo "입력된 TAG 교체 : $(MY_TAG)"
               sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
-              cat kubernetes/deploy-green.yml
-              tree
 
 # image pull secret 재생성
           - task: KubernetesManifest@0
@@ -93,11 +91,17 @@ stages:
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
 
-          - script: |
-              # 완료되었을까?
-              echo 'ok?'
-              # 서비스 돌려주기
-              # sed 's/{{SED_DATA}}/$(MY_TAG)/gi' kubernetes/deploy-green.yaml > kubernetes/deploy-green.yaml
+- stage: Service
+  displayName: Service
+  dependsOn: Deploy
+  jobs:
+  - job: ServiceChange
+    displayName: Service Change
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - script: |
+        kubectl get svc -n azdev
 
 
 #   - deployment: DeployPullRequest
