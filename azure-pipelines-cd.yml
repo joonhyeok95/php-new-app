@@ -125,11 +125,11 @@ stages:
       inputs:
         secureFile: 'aks.config'
     - script: |
-        echo '파일경로 : $(sample.secureFilePath)'
-        ls -al
-        tree
+        echo "파일경로 : $(sample.secureFilePath)"
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
-
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
 #   - deployment: DeployPullRequest
 #     displayName: Deploy Pull request
