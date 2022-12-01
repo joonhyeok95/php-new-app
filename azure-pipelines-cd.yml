@@ -101,37 +101,6 @@ stages:
               # containers: |
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
-# 서비스 교체 테스트 완료
-- stage: check
-  dependsOn: Deploy
-  jobs:
-  - job: waitForValidation
-    displayName: check admin
-    pool: server
-    timeoutInMinutes: 4320 # job times out in 3 days
-    steps:
-    - task: ManualValidation@0
-      timeoutInMinutes: 1440 # task times out in 1 day
-      inputs:
-          notifyUsers: |
-              joon95
-          instructions: 'Please validate the build configuration and resume'
-          onTimeout: 'resume'
-
-  - job: failed
-    condition: failed()
-    dependsOn: waitForValidation
-    steps:
-    - script: |
-        echo 'fail 인가요..'
-
-  - job: success
-    dependsOn: waitForValidation
-    condition: succeeded()
-    steps:
-    - script: |
-        echo 'successed 인가요..'
-
 - stage: Service
   displayName: Service
   dependsOn: check
@@ -153,6 +122,53 @@ stages:
         kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
+
+# 서비스 교체 테스트 완료
+- stage: check
+  dependsOn: Deploy
+  jobs:
+  - job: waitForValidation
+    displayName: check admin
+    pool: server
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 1440 # task times out in 1 day
+      inputs:
+          notifyUsers: |
+              joon95
+          instructions: 'Green pod 를 최종 적용하시겠습니까?'
+          onTimeout: 'resume'
+
+  - job: failed
+    condition: failed()
+    dependsOn: waitForValidation
+    steps:
+    - task: DownloadSecureFile@1
+      name: sample
+      inputs:
+        secureFile: 'aks.config'
+    - script: |
+        echo '최종 적용 취소'
+        echo '> 이전 tag 로 변경해야함. spring-app-deployment deploy의 vers 라벨을 추출해서 svc 에 적용'
+        # kubectl get deploy spring-app-deployment -n azdev --kubeconfig $(sample.secureFilePath)
+
+  - job: success
+    dependsOn: waitForValidation
+    condition: succeeded()
+    steps:
+    - task: DownloadSecureFile@1
+      name: sample
+      inputs:
+        secureFile: 'aks.config'
+    - script: |
+        echo '최종 적용 확인'
+        echo '> successed Blue deploy에 신규 버전으로 배포하고, green deploy 삭제해야댐'
+        # kubectl get deploy -n azdev --kubeconfig $(sample.secureFilePath) -o yaml
+
+        echo 'blue deploy 신규버전 배포 ~ '
+        
+        echo 'green deploy 삭제  ~ '
 
 #   - deployment: DeployPullRequest
 #     displayName: Deploy Pull request
