@@ -90,7 +90,6 @@ stages:
               # containers: |
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
-
 - stage: Service
   displayName: Service
   dependsOn: Deploy
@@ -100,6 +99,17 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
+        namespace: 'azdev'
+        command: 'get'
+        arguments: 'svc'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+        
     - script: |
         kubectl get svc -n azdev
 
