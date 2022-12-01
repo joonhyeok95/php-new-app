@@ -105,7 +105,8 @@ stages:
 # 서비스 교체 테스트 완료
 - stage: Service
   displayName: Service
-  # dependsOn: Deploy
+  dependsOn: Deploy
+  lockBehavior: sequential
   jobs:
   - job: ServiceChange
     displayName: Service Change
