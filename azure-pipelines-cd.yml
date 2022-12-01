@@ -121,13 +121,14 @@ stages:
     #     secretType: 'dockerRegistry'
     #     containerRegistryType: 'Azure Container Registry'
     - task: DownloadSecureFile@1
+      name: sample
       inputs:
         secureFile: 'aks.config'
     - script: |
-        echo '파일경로 : $(aks.config.secureFilePath)'
+        echo '파일경로 : $(sample.secureFilePath)'
         ls -al
         tree
-        kubectl get svc -n azdev --kubeconfig $(aks.config.secureFilePath)
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
 
 #   - deployment: DeployPullRequest
