@@ -65,10 +65,10 @@ stages:
             fetchTags: true
             displayName: git clone
           - script: |
-              tree
-              # 여기서 yaml label을 설정해야함.
+              echo '여기서 yaml label을 설정해야함.'
               sed "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml > kubernetes/deploy-green.yml
               cat kubernetes/deploy-green.yml
+              tree
 
 # image pull secret 재생성
           - task: KubernetesManifest@0
