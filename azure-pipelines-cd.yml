@@ -108,9 +108,6 @@ stages:
     displayName: Service Change
     pool:
       vmImage: $(vmImageName)
-    variables:
-    - name: test
-      value: $[variables.aks.config]
     steps:
     
     # - task: Kubernetes@1
@@ -122,11 +119,13 @@ stages:
     #     arguments: 'svc'
     #     secretType: 'dockerRegistry'
     #     containerRegistryType: 'Azure Container Registry'
-        
+    - task: DownloadSecureFile@1
+      name: kubeconfig
+      displayName: 'kubeconfig file load'
+      inputs:
+        secureFile: 'aks.config'
     - script: |
-        echo $(aks.config)
-        echo $(ss)
-        kubectl get svc -n azdev --kubeconfig $(test)
+        kubectl get svc -n azdev --kubeconfig $(kubeconfig)
 
 
 #   - deployment: DeployPullRequest
