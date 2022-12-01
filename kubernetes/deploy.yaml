@@ -26,7 +26,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: spring-app
         ports:
-        - containerPort: 80
+        - containerPort: 8222
           name: http
           protocol: TCP
         readinessProbe:
@@ -40,8 +40,3 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      imagePullSecrets:
-      - name: lottechemicalacr2257d2fa-auth
