@@ -124,6 +124,8 @@ stages:
     #     containerRegistryType: 'Azure Container Registry'
         
     - script: |
+        echo $(aks.config)
+        echo $(ss)
         kubectl get svc -n azdev --kubeconfig $(test)
 
 
