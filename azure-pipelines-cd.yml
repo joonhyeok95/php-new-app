@@ -1,4 +1,5 @@
 # Deploy to Azure Kubernetes Service
+
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
@@ -120,12 +121,10 @@ stages:
     #     secretType: 'dockerRegistry'
     #     containerRegistryType: 'Azure Container Registry'
     - task: DownloadSecureFile@1
-      name: kubeconfig
-      displayName: 'kubeconfig file load'
       inputs:
         secureFile: 'aks.config'
     - script: |
-        kubectl get svc -n azdev --kubeconfig $(kubeconfig)
+        kubectl get svc -n azdev --kubeconfig aks.config
 
 
 #   - deployment: DeployPullRequest
