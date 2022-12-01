@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: spring-app-green
-      vers: default
+      vers: {{SED_DATA}}
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,7 +19,7 @@ spec:
     metadata:
       labels:
         app: spring-app-green
-        vers: default
+        vers: {{SED_DATA}}
     spec:
       containers:
       - image: lottechemicalacr.azurecr.io/spring-app
