@@ -5,7 +5,7 @@
 
 # trigger:
 # - main
-
+name: Green-Deploy
 resources:
 - repo: self
 
@@ -48,59 +48,61 @@ stages:
 #     - upload: manifests
 #       artifact: manifests
 
-# - stage: Deploy
-#   displayName: Deploy stage
-#   # dependsOn: Build
+- stage: Deploy
+  displayName: Deploy stage
+  # dependsOn: Build
 
-#   jobs:
-#   - deployment: Deploy
-#     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
-#     displayName: Deploy
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: 'joonhyeok95phpnewapp.azdev'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - checkout: self
-#             fetchTags: true
-#             displayName: git clone
+  jobs:
+  - deployment: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    displayName: Deploy Green
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'joonhyeok95phpnewapp.azdev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            fetchTags: true
+            displayName: git clone
 
-#           - script: |
-#               echo "입력된 TAG 교체 : $(MY_TAG)"
-#               sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
+          - script: |
+              echo "입력된 TAG 교체 : $(MY_TAG)"
+              sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
 
-# # image pull secret 재생성
-#           - task: KubernetesManifest@0
-#             displayName: Create imagePullSecret
-#             inputs:
-#               action: createSecret
-#               secretName: $(imagePullSecret)
-#               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-# # 기존 deployment-green 삭제하기
-#           - task: Kubernetes@1
-#             inputs:
-#               connectionType: 'Kubernetes Service Connection'
-#               kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
-#               namespace: 'azdev'
-#               command: 'delete'
-#               arguments: -f kubernetes/deploy-green.yml
+# image pull secret 생성
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+# 기존 deployment-green 삭제하기
+          - task: Kubernetes@1
+            inputs:
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
+              namespace: 'azdev'
+              command: 'delete'
+              arguments: -f kubernetes/deploy-green.yml
               
-# # deploy blue&green 
-#           - task: KubernetesManifest@0
-#             displayName: Deploy to Kubernetes cluster
-#             inputs:
-#               action: deploy
-#               manifests: |
-#                 kubernetes/deploy-green.yml
-#               imagePullSecrets: |
-#                 $(imagePullSecret)
-#               # sed 명령어 실행 후 이미지태그가 안먹음...
-#               # containers: |
-#               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
+# deploy green 
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                kubernetes/deploy-green.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              # sed 명령어 실행 후 이미지태그가 안먹음...
+              # containers: |
+              #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
 
+# 서비스 교체 테스트 완료
 - stage: Service
   displayName: Service
   # dependsOn: Deploy
@@ -110,16 +112,6 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    
-    # - task: Kubernetes@1
-    #   inputs:
-    #     connectionType: 'Kubernetes Service Connection'
-    #     kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
-    #     namespace: 'azdev'
-    #     command: 'get'
-    #     arguments: 'svc'
-    #     secretType: 'dockerRegistry'
-    #     containerRegistryType: 'Azure Container Registry'
     - task: DownloadSecureFile@1
       name: sample
       inputs:
