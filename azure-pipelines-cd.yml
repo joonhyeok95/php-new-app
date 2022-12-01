@@ -102,10 +102,10 @@ stages:
               #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
 # 서비스 교체 테스트 완료
-- stage: check ADMIN
+- stage: check
   jobs:
   - job: waitForValidation
-    displayName: Wait for external validation  
+    displayName: check admin  
     pool: server    
     timeoutInMinutes: 4320 # job times out in 3 days
     steps:   
