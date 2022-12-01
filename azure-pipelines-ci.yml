@@ -2,12 +2,8 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-resources:
-  repositories:
-    - repository: php-new-app
-      type: git
-      name: php-new-app
-      ref: $(branch)
+resources: 
+- repo: self
 
 variables:
 
