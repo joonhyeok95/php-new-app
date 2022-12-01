@@ -9,10 +9,10 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'a96adbf8-46b7-4e23-bb11-3aa7c61abfda'
-  imageRepository: 'springapp'
+  imageRepository: 'spring-app'
   containerRegistry: 'lottechemicalacr.azurecr.io'
   dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
+  # tag: '$(Build.BuildId)'
   imagePullSecret: 'lottechemicalacr34208459-auth'
 
   # Agent VM image name
@@ -32,7 +32,7 @@ stages:
     - checkout: spring
       fetchTags: true
       displayName: git clone
-      
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
