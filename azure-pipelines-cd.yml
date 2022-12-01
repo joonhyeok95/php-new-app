@@ -103,6 +103,7 @@ stages:
 
 # 서비스 교체 테스트 완료
 - stage: check
+  dependsOn: Deploy
   jobs:
   - job: waitForValidation
     displayName: check admin  
@@ -119,7 +120,7 @@ stages:
 
 - stage: Service
   displayName: Service
-  dependsOn: Deploy
+  dependsOn: check
   lockBehavior: sequential
   jobs:
   - job: ServiceChange
