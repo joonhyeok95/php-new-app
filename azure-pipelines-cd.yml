@@ -24,6 +24,7 @@ variables:
   # Name of the new namespace being created to deploy the PR changes.
   # k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
 
+
 stages:
 # - stage: Build
 #   displayName: Build stage
@@ -107,6 +108,9 @@ stages:
     displayName: Service Change
     pool:
       vmImage: $(vmImageName)
+    variables:
+    - name: test
+      value: $[variables.aks.config]
     steps:
     
     # - task: Kubernetes@1
@@ -120,7 +124,7 @@ stages:
     #     containerRegistryType: 'Azure Container Registry'
         
     - script: |
-        kubectl get svc -n azdev --kubeconfig $(aks.config)
+        kubectl get svc -n azdev --kubeconfig $(test)
 
 
 #   - deployment: DeployPullRequest
