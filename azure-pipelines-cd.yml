@@ -76,7 +76,15 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
+# kubectl 사용하기
+          - task: Kubernetes@1
+            inputs:
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
+              namespace: 'azdev'
+              command: 'delete'
+              arguments: -f kubernetes/deploy-green.yml
+              
 # deploy blue&green 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
