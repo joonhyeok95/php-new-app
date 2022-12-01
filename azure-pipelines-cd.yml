@@ -68,6 +68,7 @@ stages:
               echo '여기서 yaml label을 설정해야함.'
               sed "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml > kubernetes/deploy-green.yml
               cat kubernetes/deploy-green.yml
+              cat Dockerfile
               tree
 
 # image pull secret 재생성
