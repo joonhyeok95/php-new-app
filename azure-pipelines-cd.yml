@@ -119,7 +119,9 @@ stages:
     #     containerRegistryType: 'Azure Container Registry'
         
     - script: |
-        kubectl get svc -n azdev --kubeconfig $(test-kubeconfig)
+        echo $(test-kubeconfig) > config.yaml
+        cat config.yaml
+        kubectl get svc -n azdev --kubeconfig config.yaml
 
 
 #   - deployment: DeployPullRequest
