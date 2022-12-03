@@ -18,7 +18,7 @@ jobs:
     needs: deployapp
     environment: joon
     steps:
-      - run: echo asked for approval joonhyeok'
+      - run: 다음 프로세스를 실행할 건가요?
 
   promotereject:
     runs-on: ubuntu-latest
