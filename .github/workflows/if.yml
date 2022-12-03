@@ -19,12 +19,6 @@ jobs:
     environment: joon
     steps:
       - run: echo asked for approval joonhyeok'
-      - name: Promote App
-        if: ${{ success() }}
-        run: echo '승인하였음'
-      - name: Reject App
-        if: ${{ failure() }}
-        run: echo '거절당함'
 
   promotereject:
     runs-on: ubuntu-latest
