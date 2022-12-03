@@ -18,7 +18,7 @@ jobs:
     needs: deployapp
     environment: joon
     steps:
-      - run: 다음 프로세스를 실행할 건가요?
+      - run: echo '이 프로세스를 실행하고 있다'
 
   promotereject:
     runs-on: ubuntu-latest
