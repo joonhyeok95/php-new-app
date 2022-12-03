@@ -18,14 +18,18 @@ jobs:
     needs: deployapp
     environment: joon
     steps:
-      - run: echo asked for approval joonhyeok
+      - run: echo asked for approval joonhyeok'
+      - name: Promote App
+        if: ${{ success() }}
+        run: echo '승인하였음'
+      - name: Reject App
+        if: ${{ failure() }}
+        run: echo '거절당함'
+
   promotereject:
     runs-on: ubuntu-latest
     needs: approveapp
     steps:
       - name: Promote App
         if: ${{ success() }}
-        run: echo '승인'
-      - name: Reject App
-        if: ${{ failure() }}
-        run: echo '거절'
+        run: echo '다음 프로세스~'
