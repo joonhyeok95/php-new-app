@@ -1,4 +1,4 @@
-name: Blue-Green-strategy
+name: if test
 on:
   workflow_dispatch:
     inputs:
