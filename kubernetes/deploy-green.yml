@@ -21,7 +21,7 @@ spec:
         color: green
     spec:
       containers:
-      - image: lottechemicalacr.azurecr.io/spring-app
+      - image: "lottechemicalacr.azurecr.io/spring-app"
         imagePullPolicy: IfNotPresent
         name: spring-app
         ports:
