@@ -2,9 +2,6 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-- main
-
 resources:
 - repo: self
 
@@ -17,7 +14,7 @@ variables:
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'lottechemicalacr20987e74-auth'
-
+  MY_TAG: '1'
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
