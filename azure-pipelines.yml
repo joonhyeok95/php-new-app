@@ -72,9 +72,8 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                $(pipeline.workspace)/s/kubernetes/deploy.yml
-                $(pipeline.workspace)/s/kubernetes/service.yml
+                manifests/deployment.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):22.11.29-001
+                lottechemicalacr.azurecr.io/php:1.0
