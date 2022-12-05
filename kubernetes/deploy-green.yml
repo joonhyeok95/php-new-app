@@ -39,5 +39,3 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources: {}
-      imagePullSecrets:
-      - name: lottechemicalacr2257d2fa-auth
