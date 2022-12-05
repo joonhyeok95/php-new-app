@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: spring-app-svc-preview
+  labels: 
+    app: spring-app-svc-preview
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8222
+  selector: 
+    app: spring-app
+    vers: blue
+  type: LoadBalancer
