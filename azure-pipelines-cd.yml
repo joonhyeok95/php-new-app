@@ -53,7 +53,7 @@ stages:
   # dependsOn: Build
 
   jobs:
-  - deployment: Deploy
+  - deployment: GreenDeploy
     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     displayName: Deploy Green
     pool:
@@ -71,7 +71,7 @@ stages:
               echo "입력된 TAG 교체 : $(MY_TAG)"
               sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
 
-# image pull secret 생성
+          # image pull secret 생성
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
@@ -79,7 +79,7 @@ stages:
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
-# 기존 deployment-green 삭제하기
+          # 기존 deployment-green 삭제하기
           - task: Kubernetes@1
             inputs:
               connectionType: 'Kubernetes Service Connection'
@@ -88,7 +88,7 @@ stages:
               command: 'delete'
               arguments: -f kubernetes/deploy-green.yml
               
-# deploy green 
+          # deploy green 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
@@ -119,8 +119,8 @@ stages:
     - script: |
         echo "파일경로 : $(sample.secureFilePath)"
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "$(MY_TAG)"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "green"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "green"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
 # 서비스 교체 테스트 완료
@@ -150,25 +150,54 @@ stages:
         secureFile: 'aks.config'
     - script: |
         echo '최종 적용 취소'
-        echo '> 이전 tag 로 변경해야함. spring-app-deployment deploy의 vers 라벨을 추출해서 svc 에 적용'
-        # kubectl get deploy spring-app-deployment -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
   - job: success
     dependsOn: waitForValidation
     condition: succeeded()
+    steps:
+    - script: |
+        echo '최종 적용 확인'
+        echo '> successed Blue deploy에 신규 버전으로 배포하고, service patch 후, green deploy 삭제해야댐'
+
+# 신규 green 배포
+- stage: BlueDeploy
+  dependsOn: check
+  jobs:
+  - job: blueDeploy
+    displayName: Blue Deploy
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+      - task: KubernetesManifest@0
+        inputs:
+          action: 'deploy'
+          kubernetesServiceConnection: 'aks-lottechemical-poc-azdev'
+          namespace: 'azdev'
+          manifests: 'kubernetes/deploy.yml'
+          containers: '$(containerRegistry)/$(imageRepository):$(MY_TAG)'
+          imagePullSecrets: '$(imagePullSecret)'
+
+    # 서비스 blue 변경
+  - job: service
+    dependsOn: blueDeploy
     steps:
     - task: DownloadSecureFile@1
       name: sample
       inputs:
         secureFile: 'aks.config'
     - script: |
-        echo '최종 적용 확인'
-        echo '> successed Blue deploy에 신규 버전으로 배포하고, green deploy 삭제해야댐'
-        # kubectl get deploy -n azdev --kubeconfig $(sample.secureFilePath) -o yaml
-
-        echo 'blue deploy 신규버전 배포 ~ '
+        echo '최종 적용 취소'
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         
-        echo 'green deploy 삭제  ~ '
+        echo 'deployment green 삭제'
+        kubectl delete deploy spring-app-deployment-preview -n azdev --kubeconfig $(sample.secureFilePath)
 
 #   - deployment: DeployPullRequest
 #     displayName: Deploy Pull request
