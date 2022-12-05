@@ -73,7 +73,7 @@ stages:
               action: deploy
               manifests: |
                 # manifests/deployment.yml
-                kubernetes/deploy.yml
+                kubernetes/deploy-green.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
