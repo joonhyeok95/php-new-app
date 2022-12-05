@@ -95,6 +95,7 @@ stages:
               action: deploy
               manifests: |
                 kubernetes/deploy-green.yml
+                # kubernetes/service-green.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               # sed 명령어 실행 후 이미지태그가 안먹음...
@@ -151,8 +152,8 @@ stages:
     - script: |
         echo '최종 적용 취소'
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
         kubectl delete deploy spring-app-deployment-preview -n azdev --kubeconfig $(sample.secureFilePath)
@@ -194,8 +195,8 @@ stages:
     - script: |
         echo '최종 적용 취소'
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         
         echo 'deployment green 삭제'
