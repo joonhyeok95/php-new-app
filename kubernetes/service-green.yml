@@ -11,5 +11,5 @@ spec:
       targetPort: 8222
   selector: 
     app: spring-app
-    vers: blue
+    color: blue
   type: LoadBalancer
