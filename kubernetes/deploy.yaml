@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: spring-app
-      vers: blue
+      color: blue
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,7 +19,7 @@ spec:
     metadata:
       labels:
         app: spring-app
-        vers: blue
+        color: blue
     spec:
       containers:
       - image: lottechemicalacr.azurecr.io/spring-app
