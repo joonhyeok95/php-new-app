@@ -72,8 +72,9 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                manifests/deployment.yml
+                # manifests/deployment.yml
+                kubernetes/deploy.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                lottechemicalacr.azurecr.io/php:1.0
+                lottechemicalacr.azurecr.io/spring-app:$(MY_TAG)
