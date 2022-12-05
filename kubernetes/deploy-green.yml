@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: spring-app
-      vers: {{SED_DATA}}
+      vers: green
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,10 +19,10 @@ spec:
     metadata:
       labels:
         app: spring-app
-        vers: {{SED_DATA}}
+        vers: green
     spec:
       containers:
-      - image: lottechemicalacr.azurecr.io/spring-app:{{SED_DATA}}
+      - image: lottechemicalacr.azurecr.io/spring-app
         imagePullPolicy: IfNotPresent
         name: spring-app
         ports:
