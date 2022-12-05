@@ -5,7 +5,7 @@
 
 # trigger:
 # - main
-name: Green-Deploy
+name: Blue-Green-Deploy
 resources:
 - repo: self
 
@@ -103,7 +103,7 @@ stages:
 
 - stage: Service
   displayName: Service
-  dependsOn: deploy
+  dependsOn: Deploy
   lockBehavior: sequential
   jobs:
   - job: ServiceChange
@@ -165,23 +165,29 @@ stages:
         echo '최종 적용 확인'
         echo '> successed Blue deploy에 신규 버전으로 배포하고, service patch 후, green deploy 삭제해야댐'
 
-# 신규 green 배포
+# 신규 Blue 배포
+
 - stage: BlueDeploy
   dependsOn: check
   jobs:
-  - job: blueDeploy
+  - deployment: blueDeploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     displayName: Blue Deploy
     pool:
       vmImage: $(vmImageName)
-    steps:
+    environment: 'joonhyeok95phpnewapp.azdev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
       # deploy green 
-      - task: KubernetesManifest@0
-        displayName: Deploy to Kubernetes cluster
-        inputs:
-          action: deploy
-          manifests: kubernetes/deploy.yml
-          imagePullSecrets: $(imagePullSecret)
-          containers: $(containerRegistry)/$(imageRepository):$(MY_TAG)
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: kubernetes/deploy.yml
+              imagePullSecrets: $(imagePullSecret)
+              containers: $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
     # 서비스 blue 변경
   - job: service
