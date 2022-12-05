@@ -79,6 +79,16 @@ stages:
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster(sample)
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: 'aks-lottechemical-poc-azdev'
+              namespace: 'azdev'
+              manifests: 'kubernetes'
+              containers: '$(containerRegistry)/$(imageRepository):$(MY_TAG)'
+              imagePullSecrets: '$(imagePullSecret)'
+
           # 기존 deployment-green 삭제하기
           # - task: Kubernetes@1
           #   inputs:
