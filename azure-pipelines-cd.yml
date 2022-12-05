@@ -97,7 +97,7 @@ stages:
                 kubernetes/deploy-green.yml
                 # kubernetes/service-green.yml
               imagePullSecrets: |
-                $(imagePullSecret)
+                lottechemicalacr64999a6b-auth
               # sed 명령어 실행 후 이미지태그가 안먹음...
               containers: |
                 $(containerRegistry)/$(imageRepository):$(MY_TAG)
