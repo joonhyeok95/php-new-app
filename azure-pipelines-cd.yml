@@ -67,9 +67,9 @@ stages:
             fetchTags: true
             displayName: git clone
 
-          - script: |
-              echo "입력된 TAG 교체 : $(MY_TAG)"
-              sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
+          # - script: |
+          #     echo "입력된 TAG 교체 : $(MY_TAG)"
+          #     sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
 
           # image pull secret 생성
           - task: KubernetesManifest@0
@@ -98,8 +98,8 @@ stages:
               imagePullSecrets: |
                 $(imagePullSecret)
               # sed 명령어 실행 후 이미지태그가 안먹음...
-              # containers: |
-              #   $(containerRegistry)/$(imageRepository):$(MY_TAG)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
 - stage: Service
   displayName: Service
@@ -155,6 +155,8 @@ stages:
         kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/vers", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
+        kubectl delete deploy spring-app-deployment-preview -n azdev --kubeconfig $(sample.secureFilePath)
+
   - job: success
     dependsOn: waitForValidation
     condition: succeeded()
@@ -172,14 +174,14 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+      # deploy green 
       - task: KubernetesManifest@0
+        displayName: Deploy to Kubernetes cluster
         inputs:
-          action: 'deploy'
-          kubernetesServiceConnection: 'aks-lottechemical-poc-azdev'
-          namespace: 'azdev'
-          manifests: 'kubernetes/deploy.yml'
-          containers: '$(containerRegistry)/$(imageRepository):$(MY_TAG)'
-          imagePullSecrets: '$(imagePullSecret)'
+          action: deploy
+          manifests: kubernetes/deploy.yml
+          imagePullSecrets: $(imagePullSecret)
+          containers: $(containerRegistry)/$(imageRepository):$(MY_TAG)
 
     # 서비스 blue 변경
   - job: service
