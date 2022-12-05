@@ -67,8 +67,8 @@ stages:
             fetchTags: true
             displayName: git clone
 
-          # - script: |
-          #     echo "입력된 TAG 교체 : $(MY_TAG)"
+          - script: |
+              echo "입력된 TAG : $(MY_TAG)"
           #     sed -i "s/{{SED_DATA}}/$(MY_TAG)/gi" kubernetes/deploy-green.yml
 
           # image pull secret 생성
@@ -78,16 +78,6 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster(sample)
-            inputs:
-              action: 'deploy'
-              kubernetesServiceConnection: 'aks-lottechemical-poc-azdev'
-              namespace: 'azdev'
-              manifests: 'kubernetes'
-              containers: '$(containerRegistry)/$(imageRepository):$(MY_TAG)'
-              imagePullSecrets: '$(imagePullSecret)'
 
           # 기존 deployment-green 삭제하기
           # - task: Kubernetes@1
