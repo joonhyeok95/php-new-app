@@ -58,6 +58,9 @@ stages:
           - script: |
               tree
               env
+              echo $(pipeline.workspace)
+              cat $(pipeline.workspace)/kubernetes/deploy.yml
+              
           # - task: KubernetesManifest@0
           #   displayName: Create imagePullSecret
           #   inputs:
