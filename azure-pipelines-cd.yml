@@ -103,7 +103,7 @@ stages:
 
 - stage: Service
   displayName: Service
-  dependsOn: check
+  dependsOn: deploy
   lockBehavior: sequential
   jobs:
   - job: ServiceChange
@@ -120,12 +120,12 @@ stages:
         echo "파일경로 : $(sample.secureFilePath)"
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "green"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "green"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-green --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "green"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
 # 서비스 교체 테스트 완료
 - stage: check
-  dependsOn: Deploy
+  dependsOn: Service
   jobs:
   - job: waitForValidation
     displayName: check admin
@@ -152,10 +152,10 @@ stages:
         echo '최종 적용 취소'
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-green --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
 
-        kubectl delete deploy spring-app-deployment-preview -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl delete deploy spring-app-deployment-green -n azdev --kubeconfig $(sample.secureFilePath)
 
   - job: success
     dependsOn: waitForValidation
@@ -195,11 +195,11 @@ stages:
         echo '최종 적용 취소'
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl patch svc spring-app-svc --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
-        kubectl patch svc spring-app-svc-preview --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl patch svc spring-app-svc-green --type=json -p='[{"op": "add", "path": "/spec/selector/color", "value": "blue"}]' -n azdev --kubeconfig $(sample.secureFilePath)
         kubectl get svc -n azdev --kubeconfig $(sample.secureFilePath)
         
         echo 'deployment green 삭제'
-        kubectl delete deploy spring-app-deployment-preview -n azdev --kubeconfig $(sample.secureFilePath)
+        kubectl delete deploy spring-app-deployment-green -n azdev --kubeconfig $(sample.secureFilePath)
 
 #   - deployment: DeployPullRequest
 #     displayName: Deploy Pull request
