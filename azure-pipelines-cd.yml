@@ -80,13 +80,13 @@ stages:
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
           # 기존 deployment-green 삭제하기
-          - task: Kubernetes@1
-            inputs:
-              connectionType: 'Kubernetes Service Connection'
-              kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
-              namespace: 'azdev'
-              command: 'delete'
-              arguments: -f kubernetes/deploy-green.yml
+          # - task: Kubernetes@1
+          #   inputs:
+          #     connectionType: 'Kubernetes Service Connection'
+          #     kubernetesServiceEndpoint: 'aks-lottechemical-poc-azdev'
+          #     namespace: 'azdev'
+          #     command: 'delete'
+          #     arguments: -f kubernetes/deploy-green.yml
               
           # deploy green 
           - task: KubernetesManifest@0
