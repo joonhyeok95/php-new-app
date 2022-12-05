@@ -73,5 +73,3 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):22.11.29-001
-                # $(containerRegistry)/$(imageRepository):$(MY_TAG)
-
