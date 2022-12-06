@@ -41,6 +41,10 @@ stages:
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
               
           - checkout: self
+          
+          - upload: manifests
+            artifact: manifests          
+            
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
