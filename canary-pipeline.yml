@@ -41,6 +41,7 @@ stages:
               
           - checkout: self
             
+          # 신규 버전을 canary 로 !
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
@@ -53,8 +54,9 @@ stages:
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):1.1
+                $(containerRegistry)/$(imageRepository):22.11.29-002
 
+          # 기존 버전을 baseline 으로 !
           - task: KubernetesManifest@0
             displayName: Deploy Forbio and ServiceMonitor
             inputs:
@@ -64,7 +66,7 @@ stages:
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):1.0
+                $(containerRegistry)/$(imageRepository):22.11.29-001
 
 # 승인 여부
 - stage: check
@@ -93,7 +95,7 @@ stages:
     displayName: Promote Canary
     pool: 
       vmImage: ubuntu-latest
-    environment: 'akspromote'
+    environment: 'joonhyeok95phpnewapp-7293.cana'
     strategy:
       runOnce:
         deploy:
@@ -106,7 +108,7 @@ stages:
               strategy: 'canary'
               manifests: |
                 manifests/deployment.yml
-              containers: '$(containerRegistry)/$(imageRepository):1.1'
+              containers: '$(containerRegistry)/$(imageRepository):22.11.29-002'
               imagePullSecrets: '$(imagePullSecret)'
 # 거절
 - stage: RejectCanary
@@ -119,7 +121,7 @@ stages:
     displayName: Reject Canary
     pool: 
       vmImage: ubuntu-latest
-    environment: 'akspromote'
+    environment: 'joonhyeok95phpnewapp-7293.cana'
     strategy:
       runOnce:
         deploy:
@@ -132,4 +134,4 @@ stages:
               strategy: 'canary'
               manifests: |
                 manifests/deployment.yml
-              containers: '$(containerRegistry)/$(imageRepository):1.0'
+              containers: '$(containerRegistry)/$(imageRepository):22.11.29-001'
