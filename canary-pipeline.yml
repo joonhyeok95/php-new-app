@@ -41,17 +41,14 @@ stages:
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
               
           - checkout: self
-          
-          - upload: manifests
-            artifact: manifests          
             
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                manifests/deployment.yml
+                manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
