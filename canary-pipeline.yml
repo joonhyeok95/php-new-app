@@ -98,6 +98,7 @@ stages:
       runOnce:
         deploy:
           steps:            
+          - checkout: self
           - task: KubernetesManifest@0
             displayName: promote canary
             inputs:
@@ -123,6 +124,7 @@ stages:
       runOnce:
         deploy:
           steps:            
+          - checkout: self
           - task: KubernetesManifest@0
             displayName: reject canary
             inputs:
