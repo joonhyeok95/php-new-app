@@ -9,7 +9,7 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '5a8d539c-8c87-4fbc-8e53-5dd958d4da74'
-  imageRepository: 'spring-app'
+  imageRepository: 'php'
   containerRegistry: 'lottechemicalacr.azurecr.io'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
