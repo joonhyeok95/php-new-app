@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: "php"
-          image: "lottechemicalacr.azurecr.io/php"
+          image: lottechemicalacr.azurecr.io/php
           ports:
             - containerPort: 80
