@@ -30,7 +30,6 @@ stages:
       vmImage: $(vmImageName)
     steps:
     
-
     - task: Maven@4
       displayName: Maven Build
       inputs:
@@ -53,5 +52,38 @@ stages:
         tags: |
           $(MY_TAG)
 
-    - upload: manifests
-      artifact: manifests
+- stage: Deploy
+  displayName: Deploy stage
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'joonhyeok95phpnewapp'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - script: |
+              tree
+              echo '샘플:'$(pipeline.workspace)
+              
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                manifests/deployment.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(MY_TAG)
