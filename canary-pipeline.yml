@@ -85,7 +85,7 @@ stages:
 # 승인
 - stage: PromoteRejectCanary
   displayName: Promote or Reject canary
-  dependsOn: DeployCanary
+  dependsOn: waitForValidation
   condition: succeeded()
 
   jobs:
@@ -110,7 +110,7 @@ stages:
 # 거절
 - stage: RejectCanary
   displayName: Reject canary
-  dependsOn: PromoteRejectCanary
+  dependsOn: waitForValidation
   condition: failed()
 
   jobs:
