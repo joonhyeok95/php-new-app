@@ -12,7 +12,6 @@ variables:
   imageRepository: 'php'
   containerRegistry: 'lottechemicalacr.azurecr.io'
   dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
   imagePullSecret: 'lottechemicalacr1661dc70-auth'
 
   # Agent VM image name
