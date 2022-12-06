@@ -21,36 +21,36 @@ variables:
 
 
 stages:
-- stage: Build
-  displayName: Build stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
+# - stage: Build
+#   displayName: Build stage
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
     
-    - task: Maven@4
-      displayName: Maven Build
-      inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
+#     - task: Maven@4
+#       displayName: Maven Build
+#       inputs:
+#         mavenPomFile: 'pom.xml'
+#         publishJUnitResults: true
+#         testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#         javaHomeOption: 'JDKVersion'
+#         mavenVersionOption: 'Default'
+#         mavenAuthenticateFeed: false
+#         effectivePomSkip: false
+#         sonarQubeRunAnalysis: false
         
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(MY_TAG)
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: $(imageRepository)
+#         dockerfile: $(dockerfilePath)
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         tags: |
+#           $(MY_TAG)
 
 - stage: Deploy
   displayName: Deploy stage
@@ -60,7 +60,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'joonhyeok95phpnewapp'
+    environment: 'joonhyeok95phpnewapp-1984'
     strategy:
       runOnce:
         deploy:
