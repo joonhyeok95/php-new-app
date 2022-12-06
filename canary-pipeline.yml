@@ -49,11 +49,11 @@ stages:
               percentage: '25'
               manifests: |
                 manifests/deployment.yml
-                manifests/service.yml
+                manifests/service-canary.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):1.0
+                $(containerRegistry)/$(imageRepository):1.1
 
           - task: KubernetesManifest@0
             displayName: Deploy Forbio and ServiceMonitor
@@ -61,8 +61,73 @@ stages:
               action: 'deploy'
               manifests: |
                 manifests/deployment.yml
-                manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):1.1
+                $(containerRegistry)/$(imageRepository):1.0
+
+# 승인 여부
+- stage: check
+  dependsOn: Deploy
+  jobs:
+  - job: waitForValidation
+    displayName: check admin
+    pool: server
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:
+    - task: ManualValidation@0
+      timeoutInMinutes: 1440 # task times out in 1 day
+      inputs:
+          notifyUsers: |
+              joon95
+          instructions: 'canary 배포를 승인 하시겠습니까?'
+          onTimeout: 'resume'
+# 승인
+- stage: PromoteRejectCanary
+  displayName: Promote or Reject canary
+  dependsOn: DeployCanary
+  condition: succeeded()
+
+  jobs:
+  - deployment: PromoteCanary
+    displayName: Promote Canary
+    pool: 
+      vmImage: ubuntu-latest
+    environment: 'akspromote.canarydemo'
+    strategy:
+      runOnce:
+        deploy:
+          steps:            
+          - task: KubernetesManifest@0
+            displayName: promote canary
+            inputs:
+              action: 'promote'
+              strategy: 'canary'
+              manifests: |
+                manifests/deployment.yml
+              containers: '$(containerRegistry)/$(imageRepository):1.1'
+              imagePullSecrets: '$(imagePullSecret)'
+# 거절
+- stage: RejectCanary
+  displayName: Reject canary
+  dependsOn: PromoteRejectCanary
+  condition: failed()
+
+  jobs:
+  - deployment: RejectCanary
+    displayName: Reject Canary
+    pool: 
+      vmImage: ubuntu-latest
+    environment: 'akscanary.canarydemo'
+    strategy:
+      runOnce:
+        deploy:
+          steps:            
+          - task: KubernetesManifest@0
+            displayName: reject canary
+            inputs:
+              action: 'reject'
+              strategy: 'canary'
+              manifests: |
+                manifests/deployment.yml
+              containers: '$(containerRegistry)/$(imageRepository):1.0'
