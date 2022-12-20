@@ -8,7 +8,8 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0e241386-781c-4828-ae4b-527b4b933fab'
+  # dockerRegistryServiceConnection: '0e241386-781c-4828-ae4b-527b4b933fab'
+  dockerRegistryServiceConnection: 'a96adbf8-46b7-4e23-bb11-3aa7c61abfda'
   imageRepository: 'springapp'
   containerRegistry: 'lottechemicalacr.azurecr.io'
   dockerfilePath: '**/Dockerfile'
