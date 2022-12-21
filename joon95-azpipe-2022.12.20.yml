@@ -8,16 +8,23 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0e241386-781c-4828-ae4b-527b4b933fab'
-  imageRepository: 'springapp'
-  containerRegistry: 'lottechemicalacr.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'lottechemicalacr20987e74-auth'
+  #dockerRegistryServiceConnection: '0e241386-781c-4828-ae4b-527b4b933fab'
+  #imageRepository: 'springapp'
+  #containerRegistry: 'lottechemicalacr.azurecr.io'
+  #dockerfilePath: '**/Dockerfile'
+  #tag: '$(Build.BuildId)'
+  #imagePullSecret: 'lottechemicalacr20987e74-auth'
   # MY_TAG: '1'
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
+  # 상원 acr
+  dockerRegistryServiceConnection: '0f770b1a-9d20-45b9-8e70-1670969b26d1'
+  imageRepository: 'phpapp'
+  containerRegistry: 'lottecontainerregistry.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  #tag: '$(Build.BuildId)'
+  imagePullSecret: 'lottecontainerregistry1727e661-auth'
 
 stages:
 - stage: Build
@@ -36,7 +43,43 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
-          $(tag)
+          $(my_tag)
 
     - upload: manifests
       artifact: manifests
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Rarerophpapp-1808.lotte'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)          
+          - checkout: self
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                manifests/deployment.yml
+                manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(my_tag)
